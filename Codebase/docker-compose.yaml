@@ -1,10 +1,15 @@
 services:
-  server: 
-    build: backend
+  server:
+    build: .
     restart: always
     ports:
     - "8080:80"
-
+  
   database:
     image: mongo
     restart: always
+    ports:
+    - "27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: connect4
+      MONGO_INITDB_ROOT_PASSWORD: super_secure_password

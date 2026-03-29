@@ -1,0 +1,23 @@
+{
+  "name": "csc581-final",
+  "version": "1.0.0",
+  "description": "I hope I get a good grade",
+  "author": "Seth Conley",
+  "license": "MIT",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sc942958/CSC581-Final-Project.git"
+  },
+  "keywords": [
+    "nodejs",
+    "bootstrap",
+    "express",
+    "mongoose"
+  ],
+  "dependencies": {
+    "express": "^4.16.4",
+    "mongoose":"^5.0.0",
+    "ejs": "5.0.1"
+  }
+}
