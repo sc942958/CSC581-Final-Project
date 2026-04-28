@@ -1,15 +1,26 @@
 services:
-  server:
-    build: .
-    restart: always
+  web-server:
+    build: 
+      context: .
+      dockerfile: web-server
     ports:
-    - "8080:80"
-  
+    - "8080:8080"
+    restart: on-failure:3
+
+  game-server:
+    build: 
+      context: .
+      dockerfile: game-server
+    ports:
+    - "8000:8000"
+    restart: on-failure:3
+    
   database:
-    image: mongo
-    restart: always
-    ports:
-    - "27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: connect4
-      MONGO_INITDB_ROOT_PASSWORD: super_secure_password
+      image: mongo
+      ports:
+      - "27017"
+      environment:
+        MONGO_INITDB_ROOT_USERNAME: connect4
+        MONGO_INITDB_ROOT_PASSWORD: super_secure_password
+      logging:
+        driver: none

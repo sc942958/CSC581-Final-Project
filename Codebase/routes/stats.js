@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../controllers/loginController');
+const stats = require('../controllers/statsController');
 
 router.use (function (req,res,next) {
   console.log('/' + req.method);
   next();
 });
 
-router.get('/',function(req,res){
-  User.index(req, res);
+router.post('/',function(req,res){
+  stats.getStats(req, res);
 });
 
 module.exports = router;

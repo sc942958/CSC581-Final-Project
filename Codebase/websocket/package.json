@@ -1,5 +1,5 @@
 {
-  "name": "csc581-final-webserver",
+  "name": "csc581-final-gameServer",
   "version": "1.0.0",
   "description": "I hope I get a good grade",
   "author": "Seth Conley",
@@ -11,18 +11,10 @@
   },
   "keywords": [
     "nodejs",
-    "bootstrap",
-    "express",
-    "mongoose"
+    "express"
   ],
   "dependencies": {
-    "bcrypt": "6.0.0",
-    "cookie-parser": "^1.4.7",
-    "dotenv": "^17.4.2",
-    "ejs": "5.0.1",
     "express": "^4.16.4",
-    "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.4.1",
     "ws": "^8.20.0"
   }
 }

@@ -8,7 +8,7 @@ router.use (function (req,res,next) {
 });
 
 router.get('/',function(req,res){
-  User.index(req, res);
+  User.home(req, res);
 });
 
 module.exports = router;

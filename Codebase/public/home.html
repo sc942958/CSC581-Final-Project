@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSC581 Final</title>
+    <link href="./css/game.css" rel="stylesheet"/>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script src="./javascript/game.js" defer></script>
+  </head>
+  <body>
+    <div class="container-fluid p-3 bg-black text-white text-center">
+      <h1>
+        Form A Horizontal, Vertical, or Diagonal Line of Four Circles&trade;
+      </h1>
+    </div>
+    <div class="row">
+      <div class="col-6">
+        <div class="start" id="start">
+          <button class="btn-primary" id="startButton">Look For Game</button>
+        </div>
+        <div class="board" id="board">
+          <div class="column" id="col1">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <div class="column" id="col2">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <div class="column" id="col3">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <div class="column" id="col4">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <div class="column" id="col5">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <div class="column" id="col6">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <div class="column" id="col7">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <table id="container">
+        <tr>
+            <td valign="top">
+                <div class="messages" id="messages">
+
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td valign="bottom">
+              <div class="bottom">
+                <input type="text" id="messageInput">
+                <button class="btn-primary">Send</button>
+              </div>
+            </td>
+        </tr>
+    </table>
+      </div>
+      <div class="col-2">
+        <p>
+          <div class="caption">Your Stats</div>
+          <ul id="stats">
+            
+          </ul>
+        </p>
+      </div>
+    </div>
+  </body>
+  </html>
+  

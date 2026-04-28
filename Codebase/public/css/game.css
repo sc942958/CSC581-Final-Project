@@ -1,0 +1,41 @@
+* {
+  box-sizing: border-box;
+}
+.column {
+  max-width: 940px;
+  padding: 10px;
+  background-color:blue;
+}
+.column > div {
+  border-radius: 50px;
+  background-color: #fff;
+  padding: 1em;
+  color: #d9480f;
+}
+.column {
+  display: none;
+  grid-template-columns: repeat(1, 90px);
+  gap: 10px;
+  grid-auto-rows: minmax(90px, auto);
+}
+.board {
+  display: none;
+  grid-template-columns: repeat(7, 110px);
+  grid-auto-rows: minmax(200px, auto);
+}
+.column:hover{
+  background-color: rebeccapurple;
+}
+.start {
+  display:block;
+}
+
+.messages {
+      height: 550px;
+      width: 450px;
+      border: 1px solid #ccc;
+      overflow-y: auto;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .message { margin: 5px 0; }

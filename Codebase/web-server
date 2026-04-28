@@ -1,0 +1,39 @@
+FROM node:latest
+
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
+
+WORKDIR /home/node/app
+
+COPY ./controllers/registerController.js ./controllers/registerController.js
+COPY ./controllers/loginController.js ./controllers/loginController.js
+COPY ./controllers/statsController.js ./controllers/statsController.js
+
+COPY ./models/users.js ./models/users.js
+
+COPY ./routes/login.js ./routes/login.js
+COPY ./routes/index.js ./routes/index.js
+COPY ./routes/home.js ./routes/home.js
+COPY ./routes/register.js ./routes/register.js
+COPY ./routes/stats.js ./routes/stats.js
+
+COPY ./middleware/verifyJWT.js ./middleware/verifyJWT.js
+
+COPY ./public/login.html ./public/login.html
+COPY ./public/home.html ./public/home.html
+COPY ./public/register.html ./public/register.html
+COPY ./public/javascript/game.js ./public/javascript/game.js
+COPY ./public/css/game.css ./public/css/game.css
+
+COPY package.json ./
+COPY app.js ./
+COPY db.js ./
+copy .env ./
+
+USER node
+
+RUN npm install
+
+EXPOSE 8080
+
+CMD [ "node", "app.js" ]
+
