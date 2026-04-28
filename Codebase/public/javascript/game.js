@@ -1,5 +1,6 @@
 //Game Board
-startPane = document.querySelector('#startButton');
+startPane = document.querySelector('#start');
+waitPane = document.querySelector('#waiting');
 const stacks = [5,5,5,5,5,5,5];
 var color = "red"
 startButton = document.querySelector('#startButton');
@@ -12,29 +13,70 @@ const startGame = async function(){
 
     ws.addEventListener('open', (event) => {
       const setupObject = {
+        login: true,
         username: playerName
       };
       ws.send(JSON.stringify(setupObject));
+      startPane.style.display = "none";
+      waitPane.style.display = "block";
     });
 
     const messages = document.querySelector('#messages');
 
     ws.onmessage = (event) => {
-      const message = document.createElement('div');
-      message.className = 'message';
-      message.textContent = event.data;
-      messages.appendChild(message);
-      messages.scrollTop = messages.scrollHeight;
+      json = JSON.parse(event.data);
+      console.log(event.data);
+      if("setup" in json){
+        ws.send(event.data);
+        waitPane.style.display = "none";
+        document.querySelector('#board').style.display = "grid";
+        document.querySelector('#col1').style.display = "grid";
+        document.querySelector('#col2').style.display = "grid";
+        document.querySelector('#col3').style.display = "grid";
+        document.querySelector('#col4').style.display = "grid";
+        document.querySelector('#col5').style.display = "grid";
+        document.querySelector('#col6').style.display = "grid";
+        document.querySelector('#col7').style.display = "grid";
+    
+    
+        col1 = document.querySelector("#col1")
+        col2 = document.querySelector("#col2")
+        col3 = document.querySelector("#col3")
+        col4 = document.querySelector("#col4")
+        col5 = document.querySelector("#col5")
+        col6 = document.querySelector("#col6")
+        col7 = document.querySelector("#col7")
+    
+        col1.addEventListener("click", function(){drop(col1, 0)});
+        col2.addEventListener("click", function(){drop(col2, 1)});
+        col3.addEventListener("click", function(){drop(col3, 2)});
+        col4.addEventListener("click", function(){drop(col4, 3)});
+        col5.addEventListener("click", function(){drop(col5, 4)});
+        col6.addEventListener("click", function(){drop(col6, 5)});
+        col7.addEventListener("click", function(){drop(col7, 6)});
+      } else if("move" in json){
+        //do stuff
+      } else if("message" in json){
+        console.log(json.message);
+        const message = document.createElement('div');
+        message.className = 'message';
+        message.innerHTML = json.message;
+        messages.appendChild(message);
+        messages.scrollTop = messages.scrollHeight;
+      }
     };
 
     function sendMessage() {
       const message = messageInput.value.trim();
+      const sendjson = {
+        message: message
+      }
       if (message) {
-        ws.send(message);
+        ws.send(JSON.stringify(sendjson));
         messageInput.value = '';
       }
     }
-
+    
     messageInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         sendMessage();
@@ -42,32 +84,6 @@ const startGame = async function(){
     });
 
     console.log("Start button pressed");
-    startPane.style.display = "none";
-    document.querySelector('#board').style.display = "grid";
-    document.querySelector('#col1').style.display = "grid";
-    document.querySelector('#col2').style.display = "grid";
-    document.querySelector('#col3').style.display = "grid";
-    document.querySelector('#col4').style.display = "grid";
-    document.querySelector('#col5').style.display = "grid";
-    document.querySelector('#col6').style.display = "grid";
-    document.querySelector('#col7').style.display = "grid";
-
-
-    col1 = document.querySelector("#col1")
-    col2 = document.querySelector("#col2")
-    col3 = document.querySelector("#col3")
-    col4 = document.querySelector("#col4")
-    col5 = document.querySelector("#col5")
-    col6 = document.querySelector("#col6")
-    col7 = document.querySelector("#col7")
-
-    col1.addEventListener("click", function(){drop(col1, 0)});
-    col2.addEventListener("click", function(){drop(col2, 1)});
-    col3.addEventListener("click", function(){drop(col3, 2)});
-    col4.addEventListener("click", function(){drop(col4, 3)});
-    col5.addEventListener("click", function(){drop(col5, 4)});
-    col6.addEventListener("click", function(){drop(col6, 5)});
-    col7.addEventListener("click", function(){drop(col7, 6)});
 }
 
 const drop = function(col, num){

@@ -30,6 +30,10 @@
   display:block;
 }
 
+.waiting {
+  display:none;
+}
+
 .messages {
       height: 550px;
       width: 450px;
