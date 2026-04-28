@@ -1,5 +1,5 @@
 # CSC581-Final-Project: Online Connect 4
-<img width="640" height="500" alt="Blank diagram(2)" src="https://github.com/user-attachments/assets/018cddc6-1ffe-464d-9f69-6d51c33dbf51" />
+<img width="1040" height="500" alt="Blank diagram(3)" src="https://github.com/user-attachments/assets/69699554-9359-4c59-9441-0c723789335b" />
 
 My Project is a multiplayer online Connect 4 server. The application will allow 2 players to play a game of Connect 4 online, with the server being able to host more than 1 match at a time. The backend server will use the Nodejs base image. The application will also allow users to create an account, and store various statistics tied to that account such as win rate, games played etc.
 
