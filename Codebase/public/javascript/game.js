@@ -3,6 +3,8 @@ startPane = document.querySelector('#start');
 waitPane = document.querySelector('#waiting');
 const stacks = [5,5,5,5,5,5,5];
 var color = "red"
+var theirColor;
+var myTurn = false;
 startButton = document.querySelector('#startButton');
 var playerName;
 
@@ -28,6 +30,11 @@ const startGame = async function(){
       console.log(event.data);
       if("setup" in json){
         ws.send(event.data);
+        myTurn = json.turn;
+        color = json.color;
+        if(color == "red"){
+          theirColor="yellow"
+        } else theirColor="red";
         waitPane.style.display = "none";
         document.querySelector('#board').style.display = "grid";
         document.querySelector('#col1').style.display = "grid";
@@ -47,15 +54,15 @@ const startGame = async function(){
         col6 = document.querySelector("#col6")
         col7 = document.querySelector("#col7")
     
-        col1.addEventListener("click", function(){drop(col1, 0)});
-        col2.addEventListener("click", function(){drop(col2, 1)});
-        col3.addEventListener("click", function(){drop(col3, 2)});
-        col4.addEventListener("click", function(){drop(col4, 3)});
-        col5.addEventListener("click", function(){drop(col5, 4)});
-        col6.addEventListener("click", function(){drop(col6, 5)});
-        col7.addEventListener("click", function(){drop(col7, 6)});
+        col1.addEventListener("click", function(){myDrop(col1, 0)});
+        col2.addEventListener("click", function(){myDrop(col2, 1)});
+        col3.addEventListener("click", function(){myDrop(col3, 2)});
+        col4.addEventListener("click", function(){myDrop(col4, 3)});
+        col5.addEventListener("click", function(){myDrop(col5, 4)});
+        col6.addEventListener("click", function(){myDrop(col6, 5)});
+        col7.addEventListener("click", function(){myDrop(col7, 6)});
       } else if("move" in json){
-        //do stuff
+        theirDrop(json.move, stacks[json.move]);
       } else if("message" in json){
         console.log(json.message);
         const message = document.createElement('div');
@@ -85,14 +92,18 @@ const startGame = async function(){
 
     console.log("Start button pressed");
 }
-
-const drop = function(col, num){
+//make it so theirDrop changes it to my turn
+const theirDrop = function(col, num){
     if(stacks[num] > -1){
         col.children[stacks[num]].style.backgroundColor = color;
     }
     stacks[num]--;
     if(color == "red") color = "yellow"; else color = "red";
-} 
+}
+//make it so myDrop disables input until they take their turn
+const myDrop = function(col, num){
+
+}
 
 startButton.addEventListener("click", function(){startGame()});
 
