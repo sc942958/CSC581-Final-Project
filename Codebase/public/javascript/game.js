@@ -12,7 +12,7 @@ var playerName;
 const startGame = async function(){
   const ws = new WebSocket('ws://localhost:8000');
 
-  console.log(playerName);
+  console.log(window.location.hostname);
 
   ws.addEventListener('open', (event) => {
     const setupObject = {

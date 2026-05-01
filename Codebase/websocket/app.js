@@ -227,6 +227,8 @@ wss.on('connection', (ws) => {
   ws.on('close', () => {
     console.log('Client disconnected');
     clients.delete(username);
+    const user = waiting.indexOf(username);
+    waiting = waiting.slice(user,user);
   });
 }); 
 
