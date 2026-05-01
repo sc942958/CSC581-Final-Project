@@ -10,7 +10,7 @@ startButton = document.querySelector('#startButton');
 var playerName;
 
 const startGame = async function(){
-  const ws = new WebSocket('ws://localhost:8000');
+  const ws = new WebSocket(`ws://${window.location.hostname}:8000`);
 
   console.log(window.location.hostname);
 
