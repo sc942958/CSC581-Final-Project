@@ -35,43 +35,8 @@ const startGame = async function(){
     } else if("move" in json){
       theirDrop(columns[json.move], json.move);
     } else if("gameEnd" in json){
-      if(json.gameEnd == "iwin") {
-        alert("You win!");
-        location.reload();
-        try{
-          response = await fetch('web-server/win', {
-              method: "post"
-          });
-        } catch(error){
-          console.log(error);
-        }
-        loadStats();
-      }
-      else if (json.gameEnd == "theywin") {
-        ws.send(JSON.stringify({theyWin: true}));
-        alert("You lose.");
-        location.reload();
-        try{
-          response = await fetch('web-server/loss', {
-              method: "post"
-          });
-        } catch(error){
-          console.log(error);
-        }
-        loadStats();
-      }
-      else {
-        alert("Draw");
-        location.reload();
-        try{
-          response = await fetch('web-server/draw', {
-              method: "post"
-          });
-        } catch(error){
-          console.log(error);
-        }
-        loadStats();
-      }
+      console.log(json.gameEnd);
+      gameEnd(json);
     } else if("message" in json){
       console.log(json.message);
       const message = document.createElement('div');
@@ -152,7 +117,25 @@ const startGame = async function(){
     col6.addEventListener("click", function(){myDrop(col6, 5)});
     col7.addEventListener("click", function(){myDrop(col7, 6)});
   }
+
+  const gameEnd = async function(json){
+    alert(json.gameEnd)
+    if(json.gameEnd == "loss"){
+      ws.send(JSON.stringify({gameEnd: "loss"}));
+    }
+    console.log(`/stats/${json.gameEnd}`);
+    try{
+      response = await fetch(`/stats/${json.gameEnd}`, {
+        method: "post"
+      });
+    } catch(error){
+      console.log(error);
+    }
+    loadStats();
+    location.reload();
+  }
 }
+
 
 startButton.addEventListener("click", function(){startGame()});
 

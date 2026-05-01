@@ -3,7 +3,7 @@ const router = express.Router();
 const register = require('../controllers/registerController');
 
 router.use (function (req,res,next) {
-  console.log('/' + req.method);
+  console.log('/register/' + req.method);
   next();
 });
 

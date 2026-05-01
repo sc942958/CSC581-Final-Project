@@ -41,7 +41,7 @@ wss.on('connection', (ws) => {
       myMove(json.myMove);
     } else if("theirMove" in json){
       theirMove(json.theirMove);
-    } else if("theyWin" in json){
+    } else if("loss" in json){
       iLose();
     } else if("message" in json){
       if(otherUsername){
@@ -195,8 +195,8 @@ wss.on('connection', (ws) => {
   }
   
   const iWin = function(){
-    ws.send(JSON.stringify({gameEnd: "iwin"}));
-    clients.get(otherUsername).send(JSON.stringify({gameEnd: "theywin"}));
+    ws.send(JSON.stringify({gameEnd: "win"}));
+    clients.get(otherUsername).send(JSON.stringify({gameEnd: "loss"}));
     games.delete(gameID);
     var canLogIn = true;
     username = undefined;
@@ -208,6 +208,7 @@ wss.on('connection', (ws) => {
   }
 
   const iLose = function(){
+    //ws.send(JSON.stringify({gameEnd: "loss"}));
     var canLogIn = true;
     username = undefined;
     otherUsername = undefined;

@@ -3,7 +3,7 @@ const router = express.Router();
 const User = require('../controllers/loginController');
 
 router.use (function (req,res,next) {
-  console.log('/' + req.method);
+  console.log('/index/' + req.method);
   next();
 });
 
