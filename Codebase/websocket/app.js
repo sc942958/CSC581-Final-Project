@@ -25,7 +25,6 @@ wss.on('connection', (ws) => {
   let myColor;
   let theirColor;
   let gameID;
-  let stacks;
   console.log('New client connected');
   
   // Send a welcome message to the client
@@ -35,64 +34,15 @@ wss.on('connection', (ws) => {
   ws.on('message', (message) => {
     json = JSON.parse(message);
     if(canLogIn && "login" in json){
-      canLogIn = false;
-      username = json.username;
-      clients.set(username, ws);
-      console.log(waiting.length);
-      if(waiting.length > 0){
-        otherUsername = waiting.shift();
-        gameID = Math.floor(Math.random()*1000000);
-        gameBoard = [
-          ["","","","","","",""],
-          ["","","","","","",""],
-          ["","","","","","",""],
-          ["","","","","","",""],
-          ["","","","","","",""],
-          ["","","","","","",""]
-        ];
-        games.set(gameID, gameBoard);
-        const mySetupObject = {
-          setup: true,
-          username: otherUsername,
-          turn: false,
-          color: ""
-        };
-        const theirSetupObject = {
-          setup: true,
-          username: username,
-          gameID: gameID,
-          turn: false,
-          color: ""
-        };
-        const num = Math.floor(Math.random()*2);
-        if(num == 1){
-          mySetupObject.turn=true;
-          mySetupObject.color="yellow";
-          theirSetupObject.color="red"
-        } else {
-          mySetupObject.color="red";
-          theirSetupObject.color="yellow";
-          theirSetupObject.turn=true;
-        }
-        clients.get(otherUsername).send(JSON.stringify(theirSetupObject));
-        ws.send(JSON.stringify(mySetupObject));
-      } else {
-        waiting.push(username);
-      }
+      login(json);
     } else if("setup" in json){
-      otherUsername = json.username;
-      gameID = json.gameID;
-      myTurn = json.turn;
-      color = json.color;
-      if(color == "red"){
-        theirColor="yellow"
-      } else theirColor="red";
-      stacks = [5,5,5,5,5,5,5];
-      ws.send(JSON.stringify({message: "<b>Chat ready</b>"}));
+      setup(json);
     } else if("myMove" in json){
-      myMove(json.move);
+      myMove(json.myMove);
     } else if("theirMove" in json){
-      theirMove(json.move);
+      theirMove(json.theirMove);
+    } else if("theyWin" in json){
+      iLose();
     } else if("message" in json){
       if(otherUsername){
         console.log(`Received: ${message}`);
@@ -103,127 +53,195 @@ wss.on('connection', (ws) => {
     }
   });
 
+  const login = function(json){
+    canLogIn = false;
+    username = json.username;
+    clients.set(username, ws);
+    if(waiting.length > 0){
+      otherUsername = waiting.shift();
+      gameID = Math.floor(Math.random()*1000000);
+      gameBoard = [
+        ["","","","","","",""],
+        ["","","","","","",""],
+        ["","","","","","",""],
+        ["","","","","","",""],
+        ["","","","","","",""],
+        ["","","","","","",""]
+      ];
+      rows = [5,5,5,5,5,5,5];
+      const game = {
+        gameBoard: gameBoard,
+        rows: rows,
+        moves: 0
+      }
+      games.set(gameID, game);
+      const mySetupObject = {
+        setup: true,
+        username: otherUsername,
+        turn: false,
+        color: ""
+      };
+      const theirSetupObject = {
+        setup: true,
+        username: username,
+        gameID: gameID,
+        turn: false,
+        color: ""
+      };
+      const num = Math.floor(Math.random()*2);
+      if(num == 1){
+        mySetupObject.turn=true;
+        mySetupObject.color="yellow";
+        theirSetupObject.color="red"
+      } else {
+        mySetupObject.color="red";
+        theirSetupObject.color="yellow";
+        theirSetupObject.turn=true;
+      }
+      clients.get(otherUsername).send(JSON.stringify(theirSetupObject));
+      ws.send(JSON.stringify(mySetupObject));
+    } else {
+      waiting.push(username);
+    }
+  }
+
+  const setup = function(json){
+    otherUsername = json.username;
+    if("gameID" in json) gameID = json.gameID;
+    myTurn = json.turn;
+    myColor = json.color;
+    if(myColor == "red"){
+      theirColor="yellow"
+    } else theirColor="red";
+    ws.send(JSON.stringify({message: "<b>Chat ready</b>"}));
+    if(myTurn){
+      ws.send(JSON.stringify({message: "<b>Your Turn</b>"}));
+      clients.get(otherUsername).send(JSON.stringify({message: "<b>Their Turn</b>"}));
+    }
+  }
+    
   const myMove = function(col){
     clients.get(otherUsername).send(JSON.stringify({move: col}));
-    drop(games.get(gameID), col, myColor);
+    ws.send(JSON.stringify({message: "<b>Their Turn</b>"}));
+    drop(col);
   }
-
+  
   const theirMove = function(col){
     ws.send(JSON.stringify({move: col}));
-    drop(games.get(gameID), col, theirColor);
+    ws.send(JSON.stringify({message: "<b>Your Turn</b>"}));
   }
 
-  const drop = function(game, column, color){
-    let row;
-    if(stacks[column] > 0){
-      game[stacks[column]][column] = color;
-      row = stacks[column];
-      stacks[column--];
-    }
-    let num = 0;
-    let i = 1;
+  const drop = function(column){
+      game = games.get(gameID);
+      game.gameBoard[game.rows[column]][column] = myColor;
+      //horizontal
+      checkDirection(game, column, 1, 0)
+      
+      //vertical
+      ||checkDirection(game, column, 0, 1)
+      
+      //downward slope
+      ||checkDirection(game, column, 1, 1)
+      
+      //upward slope
+      ||checkDirection(game, column, -1, 1);
+      game.rows[column]--;
+      game.moves++;
+      if(game.moves == 42) draw();
+  }
+
+  const checkDirection = function(game, column, x, y){
+    let incx = x;
+    let incy = y;
+    let num = 1;
     let switchdirection = false;
-    //checking horizontal connection
+    let nextRow;
+    let nextColumn;
     while(true){
-      if(game[stacks[column]][column-i] == color && !switchdirection){
-        num++;
-        i++;
-        if(num == 4 && color == myColor){
-          iWin();
-        } else theyWin();
-      } else {switchdirection = true;}
-      if(game[stacks[column]][column+i] == color && switchdirection){
-        num++;
-        i++;
-        if(num == 4 && color == myColor){
-          iWin();
-        } else theyWin();
+      //nextRow < 6 && nextRow > -1
+      const verifyRow = (game.rows[column] + incy < 6) && (game.rows[column] + incy > -1);
+      //nextColumn < 7 && nextColumn > -1
+      const verifyColumn = (column+incx < 7) && (column+incx > -1);
+      let verified = true;
+      if((verifyRow && verifyColumn)){  
+        nextRow = game.rows[column] + incy;
+        nextColumn = column+incx;
       } else {
-        num = 0;
-        i = 1;
-        switchdirection = false;
-        break;
-      };
-    }
-    //checking vertical connection
-    while(true){
-      if(game[stacks[column]-i][column] == color && !switchdirection){
+        verified = false;
+      }
+
+      if(verified && game.gameBoard[nextRow][nextColumn] == myColor){
         num++;
-        i++;
-        if(num == 4 && color == myColor){
+        if(num >= 4){
           iWin();
-        } else theyWin();
-      } else {switchdirection = true;}
-      if(game[stacks[column]+1][column] == color && switchdirection){
-        num++;
-        i++;
-        if(num == 4 && color == myColor){
-          iWin();
-        } else theyWin();
+          return true;
+        }
+        if(!switchdirection){
+          incy += y;
+          incx += x;
+        } else {
+          incy -= y;
+          incx -= x;
+        }
       } else {
-        num = 0;
-        i = 1;
-        switchdirection = false;
-        break;
-      };
-    }
-    //checking downward slant
-    while(true){
-      if(game[stacks[column]-i][column-i] == color && !switchdirection){
-        num++;
-        inc++;
-        if(num == 4 && color == myColor){
-          iWin();
-        } else theyWin();
-      } else {switchdirection = true;}
-      if(game[stacks[column]+i][column+i] == color && switchdirection){
-        num++;
-        inc++;
-        if(num == 4 && color == myColor){
-          iWin();
-        } else theyWin();
-      } else {
-        num = 0;
-        inc = 1;
-        switchdirection = false;
-        break;
-      };
-    }
-    //checking upward slant
-    while(true){
-      if(game[stacks[column]+i][column-i] == color && !switchdirection){
-        num++;
-        inc++;
-        if(num == 4 && color == myColor){
-          iWin();
-        } else theyWin();
-      } else {switchdirection = true;}
-      if(game[stacks[column]-i][column+i] == color && switchdirection){
-        num++;
-        inc++;
-        if(num == 4 && color == myColor){
-          iWin();
-        } else theyWin();
-      } else {
-        num = 0;
-        inc = 1;
-        switchdirection = false;
-        break;
-      };
+        if(!switchdirection) {
+          switchdirection = true;
+          incx = -x;
+          incy = -y;
+        }
+        else return false;
+      }
     }
   }
-
+  
   const iWin = function(){
     ws.send(JSON.stringify({gameEnd: "iwin"}));
+    clients.get(otherUsername).send(JSON.stringify({gameEnd: "theywin"}));
+    games.delete(gameID);
+    var canLogIn = true;
+    username = undefined;
+    otherUsername = undefined;
+    myTurn = undefined;
+    myColor = undefined;
+    theirColor = undefined;
+    gameID = undefined;
   }
 
-  const theyWin = function(){
-    ws.send(JSON.stringify({gameEnd: "theywin"}));
+  const iLose = function(){
+    var canLogIn = true;
+    username = undefined;
+    otherUsername = undefined;
+    myTurn = undefined;
+    myColor = undefined;
+    theirColor = undefined;
+    gameID = undefined;
   }
 
+  const draw = function(){
+    ws.send(JSON.stringify({gameEnd: "draw"}));
+    clients.get(otherUsername).send(JSON.stringify({gameEnd: "draw"}));
+  }
+  
   // Close event handler
   ws.on('close', () => {
     console.log('Client disconnected');
     clients.delete(username);
   });
 }); 
+
+// const testBoard = [
+//   [".",".",".",".",".",".","."],
+//   [".",".",".",".",".",".","."],
+//   [".",".",".",".",".",".","."],
+//   [".",".",".",".",".",".","."],
+//   [".",".",".",".",".",".","."],
+//   [".",".",".",".",".",".","."]
+//   ]
+// testBoard[nextRow][nextColumn] = "#";
+// testBoard[game.rows[column]][column] = "C";
+// console.log(JSON.stringify(testBoard[0]));
+// console.log(JSON.stringify(testBoard[1]));
+// console.log(JSON.stringify(testBoard[2]));
+// console.log(JSON.stringify(testBoard[3]));
+// console.log(JSON.stringify(testBoard[4]));
+// console.log(JSON.stringify(testBoard[5])+"\n");
