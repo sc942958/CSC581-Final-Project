@@ -119,21 +119,15 @@ wss.on('connection', (ws) => {
       theirColor="yellow"
     } else theirColor="red";
     ws.send(JSON.stringify({message: "<b>Chat ready</b>"}));
-    if(myTurn){
-      ws.send(JSON.stringify({message: "<b>Your Turn</b>"}));
-      clients.get(otherUsername).send(JSON.stringify({message: "<b>Their Turn</b>"}));
-    }
   }
     
   const myMove = function(col){
     clients.get(otherUsername).send(JSON.stringify({move: col}));
-    ws.send(JSON.stringify({message: "<b>Their Turn</b>"}));
     drop(col);
   }
   
   const theirMove = function(col){
     ws.send(JSON.stringify({move: col}));
-    ws.send(JSON.stringify({message: "<b>Your Turn</b>"}));
   }
 
   const drop = function(column){

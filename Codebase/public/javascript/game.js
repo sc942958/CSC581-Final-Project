@@ -1,6 +1,7 @@
 //Game Board
 startPane = document.querySelector('#start');
 waitPane = document.querySelector('#waiting');
+const turnIndicator = document.querySelector("#turnIndicator");
 const stacks = [5,5,5,5,5,5,5];
 var columns = [];
 var color = "red"
@@ -72,6 +73,8 @@ const startGame = async function(){
       col.children[stacks[num]].style.backgroundColor = theirColor;
       stacks[num]--;
       myTurn = true;
+      turnIndicator.style.backgroundColor = color;
+      turnIndicator.innerHTML = "<h3>Your Turn</h3>";
     }
   }
   //make it so myDrop disables input until they take their turn
@@ -81,6 +84,8 @@ const startGame = async function(){
       col.children[stacks[num]].style.backgroundColor = color;
       stacks[num]--;
       ws.send(JSON.stringify({myMove: num}));
+      turnIndicator.style.backgroundColor = theirColor;
+      turnIndicator.innerHTML = "<h3>Their Turn</h3>";
     }
   }
 
@@ -91,6 +96,13 @@ const startGame = async function(){
     if(color == "red"){
       theirColor="yellow"
     } else theirColor="red";
+    if(myTurn){
+      turnIndicator.style.backgroundColor = color;
+      turnIndicator.innerHTML = "<h3>Your Turn</h3>";
+    } else {
+      turnIndicator.style.backgroundColor = theirColor;
+      turnIndicator.innerHTML = "<h3>Their Turn</h3>";
+    }
     waitPane.style.display = "none";
     document.querySelector('#board').style.display = "grid";
     document.querySelector('#col1').style.display = "grid";
@@ -167,10 +179,22 @@ const loadStats = async function() {
         player = await response.json();
         playerName = player.username;
         stats = document.querySelector("#stats");
-        stats.appendChild(document.createTextNode(player.username));
-        stats.appendChild(document.createTextNode(`Wins: ${player.wins}`));
-        stats.appendChild(document.createTextNode(`Losses: ${player.losses}`));
-        stats.appendChild(document.createTextNode(`Draws: ${player.draws}`));
+        div = document.createElement('div')
+        div.className = 'stat';
+        div.innerHTML = `<h2><b>${player.username}</b><h2>`;
+        stats.appendChild(div);
+        div = document.createElement('div')
+        div.className = 'stat';
+        div.innerHTML = `<h3><b>Wins:</b> ${player.wins}<h3>`;
+        stats.appendChild(div);
+        div = document.createElement('div')
+        div.className = 'stat';
+        div.innerHTML = `<h3><b>Losses:</b> ${player.losses}<h3>`;
+        stats.appendChild(div);
+        div = document.createElement('div')
+        div.className = 'stat';
+        div.innerHTML = `<h3><b>Draws:</b> ${player.draws}<h3>`;
+        stats.appendChild(div);
         
     }catch(error){
     console.log(error);
