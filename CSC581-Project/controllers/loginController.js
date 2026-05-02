@@ -22,7 +22,7 @@ exports.login = async function (req, res){
             const accessToken = jwt.sign(
                 { "username": req.body.username },
                 process.env.ACCESS_TOKEN_SECRET,
-                { expiresIn: '3000s' }
+                { expiresIn: '30000s' }
             );
             res.cookie('jwt', accessToken, { httpOnly: true, maxAge: 50 * 60 * 1000});
             res.redirect("/home");
