@@ -25,6 +25,7 @@ wss.on('connection', (ws) => {
   let myColor;
   let theirColor;
   let gameID;
+  let inGame = false;
   console.log('New client connected');
   
   // Send a welcome message to the client
@@ -37,12 +38,15 @@ wss.on('connection', (ws) => {
       login(json);
     } else if("setup" in json){
       setup(json);
+      ingame = true;
     } else if("myMove" in json){
       myMove(json.myMove);
     } else if("theirMove" in json){
       theirMove(json.theirMove);
     } else if("loss" in json){
       iLose();
+    } else if("disconnect" in json){
+      iWin();
     } else if("message" in json){
       if(otherUsername){
         console.log(`Received: ${message}`);
@@ -100,6 +104,7 @@ wss.on('connection', (ws) => {
       }
       clients.get(otherUsername).send(JSON.stringify(theirSetupObject));
       ws.send(JSON.stringify(mySetupObject));
+      inGame = true;
     } else {
       waiting.push(username);
     }
@@ -174,6 +179,7 @@ wss.on('connection', (ws) => {
         num++;
         if(num >= 4){
           iWin();
+          inGame = false;
           return true;
         }
         if(!switchdirection){
@@ -196,7 +202,7 @@ wss.on('connection', (ws) => {
   
   const iWin = function(){
     ws.send(JSON.stringify({gameEnd: "win"}));
-    clients.get(otherUsername).send(JSON.stringify({gameEnd: "loss"}));
+    if(inGame) clients.get(otherUsername).send(JSON.stringify({gameEnd: "loss"}));
     games.delete(gameID);
     var canLogIn = true;
     username = undefined;
@@ -229,6 +235,9 @@ wss.on('connection', (ws) => {
     clients.delete(username);
     const user = waiting.indexOf(username);
     waiting = waiting.slice(user,user);
+    if(inGame){
+      clients.get(otherUsername).send(JSON.stringify({disconnect: true}));
+    }
   });
 }); 
 

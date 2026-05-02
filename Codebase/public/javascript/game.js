@@ -8,6 +8,7 @@ var theirColor;
 var myTurn = false;
 startButton = document.querySelector('#startButton');
 var playerName;
+var inGame = false;
 
 const startGame = async function(){
   const ws = new WebSocket(`ws://${window.location.hostname}:8000`);
@@ -28,15 +29,15 @@ const startGame = async function(){
 
   ws.onmessage = (event) => {
     json = JSON.parse(event.data);
-    console.log(event.data);
     if("setup" in json){
       ws.send(event.data);
       setup(json);
     } else if("move" in json){
       theirDrop(columns[json.move], json.move);
     } else if("gameEnd" in json){
-      console.log(json.gameEnd);
       gameEnd(json);
+    } else if("disconnect" in json){
+      ws.send(JSON.stringify({disconnect: true}));
     } else if("message" in json){
       console.log(json.message);
       const message = document.createElement('div');
@@ -86,6 +87,7 @@ const startGame = async function(){
   const setup = function(json){
     myTurn = json.turn;
     color = json.color;
+    inGame = true;
     if(color == "red"){
       theirColor="yellow"
     } else theirColor="red";
@@ -118,12 +120,27 @@ const startGame = async function(){
     col7.addEventListener("click", function(){myDrop(col7, 6)});
   }
 
+  ws.onclose = async () => {
+    if(inGame){
+      inGame = false;
+      try{
+        response = await fetch(`/stats/loss`, {
+        method: "post"
+      });
+      } catch(error){
+        console.log(error);
+      }
+      loadStats();
+      location.reload();
+    }
+  };
+
   const gameEnd = async function(json){
     alert(json.gameEnd)
     if(json.gameEnd == "loss"){
       ws.send(JSON.stringify({gameEnd: "loss"}));
     }
-    console.log(`/stats/${json.gameEnd}`);
+    inGame = false;
     try{
       response = await fetch(`/stats/${json.gameEnd}`, {
         method: "post"
