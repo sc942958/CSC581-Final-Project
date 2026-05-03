@@ -39,5 +39,4 @@ jobs:
         run: |
           # The runner executes these commands directly on your CloudLab server
           docker compose pull web-server
-          docker compose pull game-server
           docker compose up -d
