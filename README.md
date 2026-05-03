@@ -20,4 +20,4 @@ When the page is first loaded, the front end javascript sends a post request to 
 
 ###Web Socket Container
 
-The game-server service is built off of the base official nodejs image, 
+The game-server service is built off of the base official nodejs image, but unlike the web-server it only needs app.js and the package file. The game server supplies all the back end functionality of the actual game of connect 4. In order for the two users to connect, the server must link them together and pass data between the two. Because I'm using websockets, this created a design challenge due to the nature of what a websocket is.
