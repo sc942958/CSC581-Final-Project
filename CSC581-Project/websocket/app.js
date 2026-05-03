@@ -10,7 +10,7 @@ const DOMPurify = createDOMPurify(window);
 //const wss = new WebSocket({ port: 8000 });
 const wss = new WebSocket.Server({port: 8000});
 
-console.log('WebSocket server is running on ws://localhost:8000');
+console.log('WebSocket server is running on port 8000');
 
 const clients = new Map();
 const games = new Map();
