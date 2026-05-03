@@ -3,6 +3,9 @@ services:
     build: 
       context: .
       dockerfile: web-server
+      tags: 
+        - "sethconley981/csc581-project-web-server"
+    image: sethconley981/csc581-project-web-server
     ports:
     - "8080:8080"
     restart: on-failure:3
@@ -11,6 +14,9 @@ services:
     build: 
       context: .
       dockerfile: game-server
+      tags:
+        - "sethconley981/csc581-project-game-server"
+    image: sethconley981/csc581-project-game-server
     ports:
     - "8000:8000"
     restart: on-failure:3
