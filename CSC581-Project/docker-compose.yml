@@ -1,12 +1,12 @@
 services:
   web-server:
-    image: sethconley981/csc581-project-web-server
+    image: sethconley981/csc581-project-web-server:1.0
     ports:
     - "8080:8080"
     restart: on-failure:3
 
   game-server:
-    image: sethconley981/csc581-project-game-server
+    image: sethconley981/csc581-project-game-server:1.0
     ports:
     - "8000:8000"
     restart: on-failure:3
