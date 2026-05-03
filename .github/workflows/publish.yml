@@ -27,7 +27,7 @@ jobs:
         id: build-push-webserver
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: ./CSC581-Project
           push: true
           tags: sethconley981/csc581-project-web-server:1.0
 
