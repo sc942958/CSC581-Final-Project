@@ -19,3 +19,5 @@ The home page displays three main elements. A div for the game on the left, a ch
 When the page is first loaded, the front end javascript sends a post request to the web server with the players username. This request is routed to "/stats", which is not covered by the authentication middleware because the stats controller runs its own authentication based on the users cookie before sending back their stats. On a successful query, the stats are then displayed on the right. Every time a game ends, the javascript queries the database with an update that increments the appropriate stat for a win, loss, or draw. A majority of the javascript is devoted to running the actual game by communicating with the game server.
 
 ###Web Socket Container
+
+The game-server service is built off of the base official nodejs image, 
