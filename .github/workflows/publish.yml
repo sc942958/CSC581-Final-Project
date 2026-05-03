@@ -31,13 +31,6 @@ jobs:
           push: true
           tags: sethconley981/csc581-project-web-server:latest
 
-      - name: build and push gameserver
-        id: build-push-gameserver
-        uses: docker/build-push-action@v3
-        with:
-          context: ./docker
-          push: true
-          tags: sethconley981/csc581-project-game-server:latest
   deploy:
     needs: build-push # Wait for the image to hit Docker Hub
     runs-on: self-hosted  # This tells GitHub to execute this on your CloudLab node!
