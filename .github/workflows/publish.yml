@@ -29,7 +29,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: sethconley981/csc581-project-web-server:latest
+          tags: sethconley981/csc581-project-web-server:1.0
 
   deploy:
     needs: build-push # Wait for the image to hit Docker Hub
